@@ -364,11 +364,49 @@ function displayHand(array){
 		usersHandDisplaySpots[item].src=array[item].image
 	}
 }
-function getById(stringid){
-	return document.getElementById(stringid)
+function getById(string){
+	return document.getElementById(string)
 }
-let deck = [s3,s4,s5,s6,s6,s7,s8,s9,s10,sj,sq,sk,sa,s2,c3,c4,c5,c6,c7,c8,c9,c10,cj,cq,ck,ca,c2,d3,d4,d5,d6,d7,d8,d9,d10,dj,dq,dk,da,d2,h3,h4,h5,h6,h7,h8,h9,h10,hj,hq,hk,ha,h2]
 
+function select(int){
+	selected_indexs.push(int)
+	console.log(selected_indexs)
+}
+
+function play(array){
+	//check if any of these work if not deselect and return invalid play message
+		//singles
+		//doubles
+		//triples
+		//quads
+		//straights
+		//*else{displayInvalidMove()}
+		}
+
+function setCurrentPlaying(){
+	//singles
+	//doubles
+	//triples
+	//bombs beat anything; bomb and then their turn
+	//straights-3-4-5-6-7
+
+}
+function bombPlay(){
+
+}
+function displayInvalidMove(){
+	//display that this was an invalid move to user
+}
+
+function updateHand(array){
+	//remove played cards from hand
+	//remove card images from board
+}
+function sortHand(a,b){
+	return a.value-b.value
+	}
+
+let selected_indexs = []
 let userDisEl0 = getById('userDis0')
 let userDisEl1 = getById('userDis1')
 let userDisEl2 = getById('userDis2')
@@ -382,9 +420,11 @@ let userDisEl9 = getById('userDis9')
 let userDisEl10 = getById('userDis10')
 let userDisEl11 = getById('userDis11')
 let userDisEl12 = getById('userDis12')
-
 let usersHandDisplaySpots = [userDisEl0,userDisEl1,userDisEl2,userDisEl3,userDisEl4,userDisEl5,userDisEl6,userDisEl7,userDisEl8,userDisEl9,userDisEl10,userDisEl11,userDisEl12]
 
-displayHand(pickHand(deal(deck),0))
+let deck = [s3,s4,s5,s6,s6,s7,s8,s9,s10,sj,sq,sk,sa,s2,c3,c4,c5,c6,c7,c8,c9,c10,cj,cq,ck,ca,c2,d3,d4,d5,d6,d7,d8,d9,d10,dj,dq,dk,da,d2,h3,h4,h5,h6,h7,h8,h9,h10,hj,hq,hk,ha,h2]
+hand=pickHand(deal(deck),0)
+hand.sort(sortHand)
+displayHand(hand)
 
 
