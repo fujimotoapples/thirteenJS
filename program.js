@@ -422,7 +422,42 @@ function isGreater(){
 	hCard=getHighCard()
 	selected_indexs=selected_indexs.sort((a, b)=>a - b);
 	selected_indexs.reverse()
-	return (playersHand[selected_indexs[0]].value >hCard)
+	sS=getSuits(lastPlay)
+	hSuit=0
+	suitValues=[]
+	for (s of sS){
+		if (s==='hearts'){
+			suitValues.push(4)
+			}
+		else if (s ==='diamonds'){
+			suitValues.push(3)
+		}
+			else if (s ==='clubs'){
+				suitValues.push(2)
+			}
+				else if (s ==='spades'){
+					suitValues.push(1)
+				}
+		}
+		suitValues.sort((a, b)=>b-a);
+	highCardSuit=playersHand[selected_indexs[0]].suit
+	console.log('highcardsuit' +highCardSuit)
+	highCardSuitValue=0
+		if (highCardSuit==='hearts'){
+			highCardSuitValue=4
+			}
+		else if (highCardSuit ==='diamonds'){
+			highCardSuitValue=3
+		}
+			else if (highCardSuit ==='clubs'){
+				highCardSuitValue=2
+			}
+				else if (highCardSuit ==='spades'){
+					highCardSuitValue=1
+				}
+		console.log(suitValues)
+	console.log(sS)
+	return (playersHand[selected_indexs[0]].value >hCard)||((highCardSuitValue>suitValues[0])&&(playersHand[selected_indexs[0]].value =hCard))
 }
 function checkSelectedPlay(selected_indexs,playersHand){
 	if (started === false && isGreater()){
