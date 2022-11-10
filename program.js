@@ -328,6 +328,10 @@ const h2 = {
 
 
 //fisher-yates shuffle
+function getById(string){
+	return document.getElementById(string)
+}
+
 function shuffle(array) {
   let currentIndex = array.length,randomIndex;
   // While there remain elements to shuffle.
@@ -352,20 +356,36 @@ function deal(array){
 	let handFour=array.slice(40,53)
 	return [handOne,handTwo,handThree,handFour]
 }
+
 function pickHand(array,int){
 	let hand = array[int]
 	return hand
 }
 
-function displayHand(array){
-	for (item in array){
-		usersHandDisplaySpots[item].src=array[item].image
+function sortHand(a,b){
+	return a.value-b.value
+	}
+
+function displayHand(){
+	for (c in playersHand){
+		usersHandDisplaySpots[c].style=''
+		usersHandDisplaySpots[c].src=playersHand[c].image
 	}
 }
-function getById(string){
-	return document.getElementById(string)
+function getValues(playersHand){
+	let handValues = []
+	for (card in playersHand){
+		handValues.push(playersHand[card].value)
+	}
+	return handValues
 }
-
+function getSuits(playersHand){
+	let handSuits = []
+	for (let card of playersHand){
+		handSuits.push(card.suit)
+	}
+	return handSuits
+	}
 function select(int,playersHand){
 	if (selected_indexs.includes(int)){
 		let index =selected_indexs.indexOf(int);
@@ -374,25 +394,60 @@ function select(int,playersHand){
 }}
 	else{
 	selected_indexs.push(int)
+	selected_indexs.sort()
 }
 console.log(selected_indexs)
 }
+function refreshDisplay(playersHand){
+	console.log(playersHand)
 
-function getValues(playersHand){
-	let handValues = []
-	for (card in playersHand){
-		handValues.push(playersHand[card].value)
+	for(let dis of usersHandDisplaySpots){
+		dis.style.display='none'
 	}
-	return handValues
+	displayHand(playersHand)
+	}
+
+function getHighCard(){
+	console.log(lastPlay)
+	if (lastPlay.length){
+result = lastPlay[0].value
+console.log(result)
+return result}
+else{
+	return 0
 }
 
-function getSuits(playersHand){
-	let handSuits = []
-	for (let card of playersHand){
-		handSuits.push(card.suit)
+}
+function isGreater(){
+	hCard=getHighCard()
+	selected_indexs=selected_indexs.sort((a, b)=>a - b);
+	selected_indexs.reverse()
+	return (playersHand[selected_indexs[0]].value >hCard)
+}
+function checkSelectedPlay(selected_indexs,playersHand){
+	if (started === false && isGreater()){
+		lastPlay=[]
+	if (selected_indexs.length===1){
+			playSingle(selected_indexs,playersHand)
+
+		}
+		else if (selected_indexs.length===2 && checkSameValue(selected_indexs,playersHand)){
+				playDouble(selected_indexs,playersHand)}
+		else if (selected_indexs.length===3 && checkSameValue(selected_indexs,playersHand)){
+			playTriple(selected_indexs,playersHand)
+		}
+		else if (selected_indexs.length===4 && checkSameValue(selected_indexs,playersHand)){
+			playBomb(selected_indexs,playersHand)
+		}
+		else if (selected_indexs.length>=3 && checkStraight(selected_indexs,playersHand)){
+			playStraight(selected_indexs,playersHand)
+
+		}
+	
+		}
+		else {displayInvalidMove()}
 	}
-	return handSuits
-	}
+ 
 function checkSameValue(selected_indexs,playersHand){
 allValues=getValues(playersHand)
 let selectedValues=[]
@@ -402,38 +457,16 @@ for (i of selected_indexs){
 	if (allEqual(selectedValues)){
 		return true}
 		else{return false}}
-
-function checkSelectedPlay(selected_indexs,playersHand){
-	if (started === false){
-	if (selected_indexs.length===1){
-			playSingle(selected_indexs,playersHand)
-		}
-		else if (selected_indexs.length===2 && checkSameValue(selected_indexs,playersHand)){
-				playDouble(selected_indexs,playersHand)}
-		else if (selected_indexs.length===3 && checkSameValue(selected_indexs,playersHand)){
-			playTriple(selected_indexs,playersHand)
-		}
-			else {displayInvalidMove()}
-		}
+function checkStraight(selected_indexs,playersHand){
+	allValues=getValues(playersHand)
+	let selectedValues=[]
+	for (i of selected_indexs){
+	  selectedValues.push(allValues[i])}
+	for (let i = 1; i<selectedValues.length;i++){
+		if (selectedValues[i]-selectedValues[i-1]>1)
+			return false}
+		return true
 	}
- 
-function play(array){
-
-	//check if any of these work if not deselect and return invalid play message
-		//singles
-		//doubles
-		//triples
-		//quads
-		//straights
-		//*else{displayInvalidMove()}
-		}
-
-function setCurrentPlaying(playType){
-	currentPlay = playType
-	console.log(currentPlay)
-	console.log(hand)
-	console.log(usersHandDisplaySpots)
-}
 
 function displayInvalidMove(){
 	console.log('invalidmove')
@@ -441,56 +474,75 @@ function displayInvalidMove(){
 	//display that this was an invalid move to user
 }
 
-function sortHand(a,b){
-	return a.value-b.value
-	}
-function getHighCard(){
 
-}
+
 function playSingle(indexArray,playersHand){
 	console.log('You played the ' +playersHand[indexArray[0]].name)
+	lastPlay.push(playersHand[indexArray[0]])
 	playersHand.splice(indexArray[0],1)
-	usersHandDisplaySpots[indexArray[0]].style.display='none'
 	selected_indexs=[]
-
-	setCurrentPlaying('playSingle')
-
+	console.log(lastPlay)
+	refreshDisplay(playersHand)
 }
 function playDouble(indexArray,playersHand){
+	console.log(indexArray)
+	indexArray=indexArray.sort((a, b)=>a - b);
+	indexArray.reverse()
+	console.log(indexArray)
 	console.log('You played doubles!')
-	setCurrentPlaying('double')
 	for(i in indexArray){
 		console.log(playersHand[indexArray[i]].name)
-	}
+		lastPlay.push(playersHand[indexArray[i]])
+		playersHand.splice(indexArray[i],1)
+			}
+	refreshDisplay(playersHand)
+	
 	selected_indexs=[]
 }
 function playTriple(indexArray,playersHand){
+	indexArray=indexArray.sort((a, b)=>a - b);
+	indexArray.reverse()
 	console.log('You played triples!')
-	setCurrentPlaying('triple')
 	for(i in indexArray){
 		console.log(playersHand[indexArray[i]].name)
+		console.log()
+		lastPlay.push(playersHand[indexArray[i]])
+		playersHand.splice(indexArray[i],1)
 	}
+	console.log(getHighCard())
+	refreshDisplay(playersHand)
 	selected_indexs=[]
 }
 function playBomb(indexArray,playersHand){
 	console.log('You played a bomb!')
+	indexArray=indexArray.sort((a, b)=>a - b);
+	indexArray.reverse()
 	for(i in indexArray){
 		console.log(playersHand[indexArray[i]].name)
+		lastPlay.push(playersHand[indexArray[i]])
+		playersHand.splice(indexArray[i],1)
 	}
+	console.log(getHighCard())
+	refreshDisplay(playersHand)
+	selected_indexs=[]
 }
 function playStraight(indexArray,playersHand){
 	console.log('You played a '+indexArray.length + 'card straight!')
-	setCurrentPlaying('straight')
-	for(i in indexArray){
-		console.log(playersHand[indexArray[i]].name)
+	indexArray=indexArray.sort((a, b)=>a - b);
+	console.log('after sort'+ indexArray)
+	indexArray=indexArray.reverse();
+	console.log('after reverse'+ indexArray)
+	
+	for(i of indexArray){
+		console.log(playersHand[i].name)
+		lastPlay.push(playersHand[i])
+		playersHand.splice(i,1)
 	}
+	console.log(getHighCard())
+	refreshDisplay(playersHand)
+	selected_indexs=[]
 }
-
-function printValues(){
-	console.log(checkSameValue(hand,selected_indexs))
-	console.log(selected_indexs)
-	console.log(selectedValues)
-}
+let lastPlay=[]
 let selected_indexs = []
 let selectedSuits =[]
 let selectedValues =[]
@@ -512,6 +564,6 @@ let usersHandDisplaySpots = [userDisEl0,userDisEl1,userDisEl2,userDisEl3,userDis
 let deck = [s3,s4,s5,s6,s7,s8,s9,s10,sj,sq,sk,sa,s2,c3,c4,c5,c6,c7,c8,c9,c10,cj,cq,ck,ca,c2,d3,d4,d5,d6,d7,d8,d9,d10,dj,dq,dk,da,d2,h3,h4,h5,h6,h7,h8,h9,h10,hj,hq,hk,ha,h2]
 let currentPlay = ''
 let started = false
-hand=pickHand(deal(deck),0)
-hand.sort(sortHand)
-displayHand(hand)
+playersHand=pickHand(deal(deck),0)
+playersHand.sort(sortHand)
+displayHand()
